@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR Training Course - Step-by-Step Learning Path</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .course-progress {
+            background: #f8f9fa;
+            padding: 30px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .progress-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .progress-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .progress-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .progress-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .learning-path {
+            padding: 40px;
+        }
+
+        .path-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .path-header h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .learning-track {
+            margin-bottom: 50px;
+        }
+
+        .track-title {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .step-container {
+            border: 2px solid #e9ecef;
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            overflow: hidden;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            padding: 25px;
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .step:last-child {
+            border-bottom: none;
+        }
+
+        .step:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .step-completed { background: #28a745; }
+        .step-current { background: #ffc107; color: #333; }
+        .step-upcoming { background: #6c757d; }
+        .step-locked { background: #dc3545; }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .step-description {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .step-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .step-duration {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .step-type {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .step-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-disabled {
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .youtube-embed {
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .prerequisite-badge {
+            background: #fff3cd;
+            color: #856404;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+        .completion-badge {
+            background: #d4edda;
+            color: #155724;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+        .nav-footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .nav-footer .btn {
+            margin: 0 10px;
+        }
+
+        @media (max-width: 768px) {
+            .step {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .step-actions {
+                margin-left: 0;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🥽 VR Training Course</h1>
+            <p>York County Community College - Step-by-Step Learning Path</p>
+        </div>
+
+        <div class="course-progress">
+            <div class="progress-overview">
+                <div class="progress-card">
+                    <h3>Overall Progress</h3>
+                    <div class="progress-number">25%</div>
+                    <p>3 of 12 steps completed</p>
+                </div>
+                <div class="progress-card">
+                    <h3>Time Invested</h3>
+                    <div class="progress-number">2.5</div>
+                    <p>hours of learning</p>
+                </div>
+                <div class="progress-card">
+                    <h3>Next Milestone</h3>
+                    <div class="progress-number">50%</div>
+                    <p>Complete Foundation Track</p>
+                </div>
+                <div class="progress-card">
+                    <h3>Estimated Completion</h3>
+                    <div class="progress-number">8</div>
+                    <p>more hours to finish</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="learning-path">
+            <div class="path-header">
+                <h2>Your Learning Journey</h2>
+                <p>Follow this structured path to master VR technology and applications</p>
+            </div>
+
+            <!-- Foundation Track -->
+            <div class="learning-track">
+                <div class="track-title">
+                    🎯 Foundation Track - Understanding VR Basics
+                </div>
+                <div class="step-container">
+                    <div class="step" onclick="openStep('intro-video')">
+                        <div class="step-number step-completed">1</div>
+                        <div class="step-content">
+                            <div class="step-title">Course Introduction & Welcome Video</div>
+                            <div class="step-description">Get acquainted with the course structure and learning objectives</div>
+                            <div class="step-meta">
+                                <div class="step-duration">⏱️ 8 minutes</div>
+                                <div class="step-type">📹 Video</div>
+                            </div>
+                            <div class="youtube-embed">
+                                <iframe width="100%" height="200" src="https://www.youtube.com/embed/80IIEnSNwQc" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-success">✓ Completed</button>
+                        </div>
+                    </div>
+
+                    <div class="step" onclick="openStep('vr-fundamentals')">
+                        <div class="step-number step-completed">2</div>
+                        <div class="step-content">
+                            <div class="step-title">What is Virtual Reality?</div>
+                            <div class="step-description">Fundamental concepts, definitions, and core principles of VR technology</div>
+                            <div class="step-meta">
+                                <div class="step-duration">⏱️ 12 minutes</div>
+                                <div class="step-type">📹 Video</div>
+                            </div>
+                            <div class="youtube-embed">
+                                <iframe width="100%" height="200" src="https://www.youtube.com/embed/KLOcj5qvOio" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-success">✓ Completed</button>
+                        </div>
+                    </div>
+
+                    <div class="step" onclick="openStep('vr-evolution')">
+                        <div class="step-number step-completed">3</div>
+                        <div class="step-content">
+                            <div class="step-title">The Evolution of VR Technology</div>
+                            <div class="step-description">Journey through VR history and technological milestones</div>
+                            <div class="step-meta">
+                                <div class="step-duration">⏱️ 15 minutes</div>
+                                <div class="step-type">📹 Video</div>
+                            </div>
+                            <div class="youtube-embed">
+                                <iframe width="100%" height="200" src="https://www.youtube.com/embed/D8GMeEZSfPQ" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-success">✓ Completed</button>
+                        </div>
+                    </div>
+
+                    <div class="step" onclick="openStep('knowledge-check-1')">
+                        <div class="step-number step-current">4</div>
+                        <div class="step-content">
+                            <div class="step-title">Knowledge Check: VR Fundamentals</div>
+                            <div class="step-description">Test your understanding of basic VR concepts</div>
+                            <div class="step-meta">
+                                <div class="step-duration">⏱️ 10 minutes</div>
+                                <div class="step-type">📝 Quiz</div>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-primary" onclick="startQuiz('fundamentals')">Start Quiz</button>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number step-upcoming">5</div>
+                        <div class="step-content">
+                            <div class="step-title">VR vs AR vs MR: Understanding the Differences</div>
+                            <div class="step-description">Compare and contrast different types of immersive technologies</div>
+                            <div class="step-meta">
+                                <div class="step-duration">⏱️ 18 minutes</div>
+                                <div class="step-type">📖 Reading + 📹 Video</div>
+                            </div>
+                            <span class="prerequisite-badge">Complete Quiz First</span>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-disabled">🔒 Locked</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hardware Track -->
+            <div class="learning-track">
+                <div class="track-title">
+                    🛠️ Hardware Track - VR Equipment & Setup
+                </div>
+                <div class="step-container">
+                    <div class="step">
+                        <div class="step-number step-upcoming">6</div>
+                        <div class="step-content">
+                            <div class="step-title">VR Hardware Components Overview</div>
+                            <div class="step-description">Learn about headsets, controllers, sensors, and tracking systems</div>
+                            <div class="step-meta">
+                                <div class="step-duration">⏱️ 22 minutes</div>
+                                <div class="step-type">📹 Video + 🔧 Interactive</div>
+                            </div>
+                            <span class="prerequisite-badge">Complete Foundation Track</span>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-disabled">🔒 Locked</button>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number step-upcoming">7</div>
+                        <div class="step-content">
+                            <div class="step-title">Meta Quest 3 Deep Dive</div>
+                            <div class="step-description">Hands-on exploration of our primary VR headset</div>
+                            <div class="step-meta">
+                                <div class="step-duration">⏱️ 35 minutes</div>
+                                <div class="step-type">🎮 Hands-on + 📹 Video</div>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-disabled">🔒 Locked</button>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number step-upcoming">8</div>
+                        <div class="step-content">
+                            <div class="step-title">VR Space Setup & Safety</div>
+                            <div class="step-description">Learn proper room setup, safety guidelines, and best practices</div>
+                            <div class="step-meta">
+                                <div class="step-duration">⏱️ 25 minutes</div>
+                                <div class="step-type">📖 Reading + 🏠 Practical</div>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-disabled">🔒 Locked</button>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number step-upcoming">9</div>
+                        <div class="step-content">
+                            <div class="step-title">Hardware Troubleshooting</div>
+                            <div class="step-description">Common issues and solutions for VR equipment</div>
+                            <div class="step-meta">
+                                <div class="step-duration">⏱️ 20 minutes</div>
+                                <div class="step-type">🔧 Problem-solving</div>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-disabled">🔒 Locked</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applications Track -->
+            <div class="learning-track">
+                <div class="track-title">
+                    🎓 Applications Track - Real-World VR Uses
+                </div>
+                <div class="step-container">
+                    <div class="step">
+                        <div class="step-number step-upcoming">10</div>
+                        <div class="step-content">
+                            <div class="step-title">VR in Education & Training</div>
+                            <div class="step-description">Explore educational applications and training simulations</div>
+                            <div class="step-meta">
+                                <div class="step-duration">⏱️ 30 minutes</div>
+                                <div class="step-type">📚 Case Studies + 📹 Video</div>
+                            </div>
+                            <span class="prerequisite-badge">Complete Hardware Track</span>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-disabled">🔒 Locked</button>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number step-upcoming">11</div>
+                        <div class="step-content">
+                            <div class="step-title">Healthcare & Medical VR Applications</div>
+                            <div class="step-description">VR in medical training, therapy, and patient care</div>
+                            <div class="step-meta">
+                                <div class="step-duration">⏱️ 28 minutes</div>
+                                <div class="step-type">🏥 Case Studies + 📹 Demo</div>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-disabled">🔒 Locked</button>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number step-upcoming">12</div>
+                        <div class="step-content">
+                            <div class="step-title">Final Project & VR Lab Experience</div>
+                            <div class="step-description">Hands-on project in the YCCC VR Lab</div>
+                            <div class="step-meta">
+                                <div class="step-duration">⏱️ 90 minutes</div>
+                                <div class="step-type">🚀 Project + 🧪 Lab Session</div>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-disabled">🔒 Locked</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-footer">
+            <a href="index.html" class="btn btn-secondary">← Back to Dashboard</a>
+            <button class="btn btn-primary" onclick="continueCurrentStep()">Continue Learning</button>
+            <a href="modules.html" class="btn btn-secondary">View All Modules</a>
+        </div>
+    </div>
+
+    <script>
+        function openStep(stepId) {
+            console.log('Opening step:', stepId);
+            // Here you would navigate to the specific step content
+        }
+
+        function startQuiz(quizType) {
+            window.location.href = `quiz.html?type=${quizType}`;
+        }
+
+        function continueCurrentStep() {
+            // Navigate to the current step (step 4 - Knowledge Check)
+            startQuiz('fundamentals');
+        }
+
+        // Track user progress
+        function updateProgress() {
+            // This would sync with your LMS or database
+            console.log('Updating user progress...');
+        }
+
+        // Initialize course on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('VR Training Course loaded');
+            updateProgress();
+        });
+    </script>
+</body>
+</html>
