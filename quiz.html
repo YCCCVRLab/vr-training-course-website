@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz - VR Training Course</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .quiz-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .quiz-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            height: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: white;
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .quiz-content {
+            padding: 40px;
+        }
+
+        .question-card {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-number {
+            color: #667eea;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .options {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+
+        .option.selected {
+            background: #e7f3ff;
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .option-letter {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .explanation {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 0 10px 10px 0;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .results-screen {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .results-screen.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .results-message {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .results-details {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .timer {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 15px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .drag-drop-area {
+            min-height: 200px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            background: #f8f9fa;
+        }
+
+        .draggable-item {
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            cursor: move;
+            display: inline-block;
+            user-select: none;
+        }
+
+        .drop-zone {
+            min-height: 60px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            text-align: center;
+            color: #666;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #667eea;
+            background: #e7f3ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1>📝 VR Training Quiz</h1>
+            <p id="quiz-title">Module 1: VR Fundamentals</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                <span id="question-counter">Question 1 of 5</span>
+                <span class="timer" id="timer">⏱️ 5:00</span>
+            </div>
+        </div>
+
+        <div class="quiz-content">
+            <!-- Question 1: Multiple Choice -->
+            <div class="question-card active" id="question-1">
+                <div class="question-number">Question 1 of 5</div>
+                <div class="question-text">What does VR stand for?</div>
+                <ul class="options">
+                    <li class="option" onclick="selectOption(this, false)">
+                        <span class="option-letter">A</span>
+                        Virtual Reality
+                    </li>
+                    <li class="option" onclick="selectOption(this, false)">
+                        <span class="option-letter">B</span>
+                        Video Recording
+                    </li>
+                    <li class="option" onclick="selectOption(this, true)">
+                        <span class="option-letter">C</span>
+                        Virtual Reality
+                    </li>
+                    <li class="option" onclick="selectOption(this, false)">
+                        <span class="option-letter">D</span>
+                        Visual Rendering
+                    </li>
+                </ul>
+                <div class="explanation" id="explanation-1">
+                    <strong>Correct!</strong> VR stands for Virtual Reality, which is a computer-generated simulation of a three-dimensional environment that can be interacted with using special equipment.
+                </div>
+            </div>
+
+            <!-- Question 2: Multiple Choice -->
+            <div class="question-card" id="question-2">
+                <div class="question-number">Question 2 of 5</div>
+                <div class="question-text">Which company developed the Meta Quest 3 VR headset?</div>
+                <ul class="options">
+                    <li class="option" onclick="selectOption(this, false)">
+                        <span class="option-letter">A</span>
+                        Sony
+                    </li>
+                    <li class="option" onclick="selectOption(this, true)">
+                        <span class="option-letter">B</span>
+                        Meta (formerly Facebook)
+                    </li>
+                    <li class="option" onclick="selectOption(this, false)">
+                        <span class="option-letter">C</span>
+                        HTC
+                    </li>
+                    <li class="option" onclick="selectOption(this, false)">
+                        <span class="option-letter">D</span>
+                        Valve
+                    </li>
+                </ul>
+                <div class="explanation" id="explanation-2">
+                    <strong>Correct!</strong> Meta (formerly Facebook) developed the Quest series of VR headsets, including the Quest 3 that we use in our VR Lab.
+                </div>
+            </div>
+
+            <!-- Question 3: True/False -->
+            <div class="question-card" id="question-3">
+                <div class="question-number">Question 3 of 5</div>
+                <div class="question-text">True or False: VR can only be used for gaming applications.</div>
+                <ul class="options">
+                    <li class="option" onclick="selectOption(this, false)">
+                        <span class="option-letter">T</span>
+                        True
+                    </li>
+                    <li class="option" onclick="selectOption(this, true)">
+                        <span class="option-letter">F</span>
+                        False
+                    </li>
+                </ul>
+                <div class="explanation" id="explanation-3">
+                    <strong>Correct!</strong> VR has many applications beyond gaming, including education, healthcare, training simulations, architecture, and therapeutic treatments.
+                </div>
+            </div>
+
+            <!-- Question 4: Multiple Select -->
+            <div class="question-card" id="question-4">
+                <div class="question-number">Question 4 of 5</div>
+                <div class="question-text">Which of the following are key components of a VR system? (Select all that apply)</div>
+                <ul class="options">
+                    <li class="option" onclick="selectMultiple(this, true)">
+                        <span class="option-letter">A</span>
+                        Head-mounted display (HMD)
+                    </li>
+                    <li class="option" onclick="selectMultiple(this, true)">
+                        <span class="option-letter">B</span>
+                        Motion tracking sensors
+                    </li>
+                    <li class="option" onclick="selectMultiple(this, false)">
+                        <span class="option-letter">C</span>
+                        Traditional computer mouse
+                    </li>
+                    <li class="option" onclick="selectMultiple(this, true)">
+                        <span class="option-letter">D</span>
+                        Hand controllers
+                    </li>
+                </ul>
+                <div class="explanation" id="explanation-4">
+                    <strong>Good job!</strong> VR systems typically include a head-mounted display, motion tracking sensors, and hand controllers. A traditional mouse is not a key VR component.
+                </div>
+            </div>
+
+            <!-- Question 5: Drag and Drop -->
+            <div class="question-card" id="question-5">
+                <div class="question-number">Question 5 of 5</div>
+                <div class="question-text">Match the VR applications to their industries:</div>
+                
+                <div style="margin: 20px 0;">
+                    <strong>Available Applications:</strong>
+                    <div class="drag-drop-area" id="source-items">
+                        <div class="draggable-item" draggable="true" data-answer="education">Virtual Field Trips</div>
+                        <div class="draggable-item" draggable="true" data-answer="healthcare">Surgical Training</div>
+                        <div class="draggable-item" draggable="true" data-answer="architecture">3D Building Walkthroughs</div>
+                        <div class="draggable-item" draggable="true" data-answer="manufacturing">Assembly Line Training</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    <div>
+                        <strong>Education:</strong>
+                        <div class="drop-zone" data-category="education">Drop education applications here</div>
+                    </div>
+                    <div>
+                        <strong>Healthcare:</strong>
+                        <div class="drop-zone" data-category="healthcare">Drop healthcare applications here</div>
+                    </div>
+                    <div>
+                        <strong>Architecture:</strong>
+                        <div class="drop-zone" data-category="architecture">Drop architecture applications here</div>
+                    </div>
+                    <div>
+                        <strong>Manufacturing:</strong>
+                        <div class="drop-zone" data-category="manufacturing">Drop manufacturing applications here</div>
+                    </div>
+                </div>
+
+                <div class="explanation" id="explanation-5">
+                    <strong>Excellent!</strong> You've correctly matched VR applications to their respective industries. This shows the versatility of VR technology across different sectors.
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div class="results-screen" id="results-screen">
+                <div class="score-circle" id="score-circle">85%</div>
+                <div class="results-message" id="results-message">Congratulations! You passed the quiz!</div>
+                <div class="results-details">
+                    <p><strong>Your Score:</strong> <span id="final-score">4 out of 5</span></p>
+                    <p><strong>Time Taken:</strong> <span id="time-taken">3:45</span></p>
+                    <p><strong>Passing Grade:</strong> 70%</p>
+                </div>
+                <div style="margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="retakeQuiz()">Retake Quiz</button>
+                    <a href="modules.html" class="btn btn-secondary">Back to Modules</a>
+                    <a href="certificate.html" class="btn btn-primary" style="margin-left: 10px;">Get Certificate</a>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="quiz-navigation" id="quiz-navigation">
+                <button class="btn btn-secondary" id="prev-btn" onclick="previousQuestion()" disabled>Previous</button>
+                <div>
+                    <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" disabled>Next</button>
+                    <button class="btn btn-primary" id="submit-btn" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        let totalQuestions = 5;
+        let score = 0;
+        let answers = {};
+        let timeRemaining = 300; // 5 minutes in seconds
+        let timerInterval;
+
+        // Start timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = `⏱️ ${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function selectOption(element, isCorrect) {
+            // Remove previous selections
+            element.parentNode.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Select current option
+            element.classList.add('selected');
+            
+            // Store answer
+            answers[currentQuestion] = isCorrect;
+            
+            // Enable next button
+            document.getElementById('next-btn').disabled = false;
+            
+            // Show explanation after a short delay
+            setTimeout(() => {
+                showExplanation(isCorrect);
+            }, 500);
+        }
+
+        function selectMultiple(element, isCorrect) {
+            element.classList.toggle('selected');
+            
+            // For multiple select, check if at least one is selected
+            const selected = element.parentNode.querySelectorAll('.option.selected');
+            document.getElementById('next-btn').disabled = selected.length === 0;
+            
+            // Store partial answer (simplified for demo)
+            answers[currentQuestion] = selected.length > 0;
+        }
+
+        function showExplanation(isCorrect) {
+            const explanation = document.getElementById(`explanation-${currentQuestion}`);
+            explanation.classList.add('show');
+            
+            if (isCorrect) {
+                score++;
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                // Hide current question
+                document.getElementById(`question-${currentQuestion}`).classList.remove('active');
+                
+                currentQuestion++;
+                
+                // Show next question
+                document.getElementById(`question-${currentQuestion}`).classList.add('active');
+                
+                // Update progress
+                updateProgress();
+                
+                // Update navigation
+                updateNavigation();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 1) {
+                document.getElementById(`question-${currentQuestion}`).classList.remove('active');
+                currentQuestion--;
+                document.getElementById(`question-${currentQuestion}`).classList.add('active');
+                updateProgress();
+                updateNavigation();
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentQuestion / totalQuestions) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion} of ${totalQuestions}`;
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            prevBtn.disabled = currentQuestion === 1;
+            
+            if (currentQuestion === totalQuestions) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.style.display = 'inline-block';
+                submitBtn.style.display = 'none';
+                nextBtn.disabled = !answers[currentQuestion];
+            }
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            
+            // Hide quiz content
+            document.querySelector('.quiz-content').style.display = 'none';
+            
+            // Show results
+            const resultsScreen = document.getElementById('results-screen');
+            resultsScreen.classList.add('show');
+            
+            // Calculate and display results
+            const percentage = Math.round((score / totalQuestions) * 100);
+            document.getElementById('score-circle').textContent = percentage + '%';
+            document.getElementById('final-score').textContent = `${score} out of ${totalQuestions}`;
+            
+            const timeTaken = 300 - timeRemaining;
+            const minutes = Math.floor(timeTaken / 60);
+            const seconds = timeTaken % 60;
+            document.getElementById('time-taken').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update message based on score
+            const message = percentage >= 70 ? 
+                'Congratulations! You passed the quiz!' : 
+                'You need 70% to pass. Try again!';
+            document.getElementById('results-message').textContent = message;
+        }
+
+        function retakeQuiz() {
+            location.reload();
+        }
+
+        // Drag and drop functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            startTimer();
+            setupDragAndDrop();
+        });
+
+        function setupDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable-item');
+            const dropZones = document.querySelectorAll('.drop-zone');
+
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', draggable.dataset.answer);
+                    e.dataTransfer.setData('text/html', draggable.outerHTML);
+                });
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    
+                    const answer = e.dataTransfer.getData('text/plain');
+                    const category = zone.dataset.category;
+                    
+                    if (answer === category) {
+                        const draggedElement = e.dataTransfer.getData('text/html');
+                        zone.innerHTML = draggedElement;
+                        zone.style.background = '#d4edda';
+                        zone.style.borderColor = '#28a745';
+                        
+                        // Remove original element
+                        const original = document.querySelector(`[data-answer="${answer}"]`);
+                        if (original && original.parentNode.id === 'source-items') {
+                            original.remove();
+                        }
+                        
+                        // Check if all items are placed correctly
+                        checkDragDropCompletion();
+                    }
+                });
+            });
+        }
+
+        function checkDragDropCompletion() {
+            const sourceItems = document.getElementById('source-items');
+            if (sourceItems.children.length === 0) {
+                answers[5] = true;
+                document.getElementById('submit-btn').disabled = false;
+                setTimeout(() => {
+                    document.getElementById('explanation-5').classList.add('show');
+                }, 500);
+            }
+        }
+    </script>
+</body>
+</html>
