@@ -90,6 +90,13 @@
         .btn:hover {
             transform: scale(1.05);
         }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding: 15px 30px;
+        }
         
         .features {
             background: rgba(255,255,255,0.9);
@@ -172,6 +179,27 @@
             font-weight: bold;
             color: #667eea;
         }
+
+        .learning-path-highlight {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 40px;
+            text-align: center;
+            border: 3px solid #667eea;
+        }
+
+        .learning-path-highlight h2 {
+            color: #667eea;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        .learning-path-highlight p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
@@ -188,16 +216,16 @@
             <p style="color: #666; margin-bottom: 20px;">Keep up the great work! You're making excellent progress.</p>
             <div class="quick-stats">
                 <div class="stat-item">
-                    <div class="stat-number">2/4</div>
-                    <div>Modules</div>
+                    <div class="stat-number">3/12</div>
+                    <div>Steps Completed</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">3/6</div>
-                    <div>Videos</div>
+                    <div>Videos Watched</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">1/4</div>
-                    <div>Quizzes</div>
+                    <div class="stat-number">0/4</div>
+                    <div>Quizzes Passed</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">0/2</div>
@@ -205,12 +233,18 @@
                 </div>
             </div>
         </div>
+
+        <div class="learning-path-highlight">
+            <h2>🎯 Step-by-Step Learning Path</h2>
+            <p>Follow our structured 12-step course designed like professional LMS platforms. Each step builds on the previous one, with videos, quizzes, and hands-on activities.</p>
+            <a href="course-structure.html" class="btn btn-primary">Start Your Learning Journey →</a>
+        </div>
         
         <div class="course-grid">
             <div class="course-card">
                 <h3>📚 Course Modules</h3>
-                <p>Structured learning modules covering VR fundamentals, safety protocols, and hands-on applications.</p>
-                <a href="modules.html" class="btn">Start Learning</a>
+                <p>Traditional module-based learning covering VR fundamentals, safety protocols, and hands-on applications.</p>
+                <a href="modules.html" class="btn">View Modules</a>
             </div>
             
             <div class="course-card">
@@ -236,31 +270,31 @@
             <h2>Course Features</h2>
             <div class="feature-list">
                 <div class="feature-item">
-                    <span class="feature-icon">⏰</span>
+                    <span class="feature-icon">📋</span>
                     <div>
-                        <strong>Flexible Schedule</strong><br>
-                        Learn at your own pace with 24/7 access
+                        <strong>Step-by-Step Structure</strong><br>
+                        12 sequential steps with clear prerequisites
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🎬</span>
+                    <div>
+                        <strong>YouTube Integration</strong><br>
+                        Curated videos embedded in lessons
                     </div>
                 </div>
                 <div class="feature-item">
                     <span class="feature-icon">🏆</span>
                     <div>
-                        <strong>Certification</strong><br>
-                        Earn a certificate upon completion
+                        <strong>Progress Tracking</strong><br>
+                        Visual progress indicators and milestones
                     </div>
                 </div>
                 <div class="feature-item">
-                    <span class="feature-icon">👥</span>
+                    <span class="feature-icon">🔒</span>
                     <div>
-                        <strong>Expert Instruction</strong><br>
-                        Learn from VR industry professionals
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-icon">🔧</span>
-                    <div>
-                        <strong>Hands-on Practice</strong><br>
-                        Real VR equipment and simulations
+                        <strong>Gated Content</strong><br>
+                        Unlock content as you complete prerequisites
                     </div>
                 </div>
                 <div class="feature-item">
@@ -271,10 +305,10 @@
                     </div>
                 </div>
                 <div class="feature-item">
-                    <span class="feature-icon">💬</span>
+                    <span class="feature-icon">🧪</span>
                     <div>
-                        <strong>Interactive Learning</strong><br>
-                        Quizzes, notes, and engagement tools
+                        <strong>Hands-on Practice</strong><br>
+                        Real VR equipment and lab sessions
                     </div>
                 </div>
             </div>
@@ -303,9 +337,9 @@
         <div style="background: rgba(255,255,255,0.9); border-radius: 15px; padding: 30px; margin-bottom: 40px;">
             <h2 style="text-align: center; color: #333; margin-bottom: 30px;">🚀 Quick Actions</h2>
             <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-                <a href="modules.html" class="btn">Continue Learning</a>
+                <a href="course-structure.html" class="btn btn-primary">Continue Learning Path</a>
+                <a href="lesson-template.html" class="btn">Take Knowledge Check</a>
                 <a href="videos.html" class="btn">Watch Next Video</a>
-                <a href="quiz.html" class="btn">Practice Quiz</a>
                 <button class="btn" onclick="downloadResources()">Download Resources</button>
             </div>
         </div>
@@ -341,6 +375,22 @@
         
         // Add some interactive animations
         document.addEventListener('DOMContentLoaded', function() {
+            // Load progress from localStorage
+            const progress = localStorage.getItem('vrCourseProgress');
+            if (progress) {
+                const progressData = JSON.parse(progress);
+                console.log('Loaded progress:', progressData);
+                
+                // Update progress display
+                const progressCircle = document.querySelector('.progress-circle');
+                const completedSteps = progressData.completedSteps || 3;
+                const percentage = Math.round((completedSteps / 12) * 100);
+                progressCircle.textContent = percentage + '%';
+                
+                // Update stats
+                document.querySelector('.stat-item:first-child .stat-number').textContent = completedSteps + '/12';
+            }
+            
             // Animate progress circle on load
             const progressCircle = document.querySelector('.progress-circle');
             if (progressCircle) {
