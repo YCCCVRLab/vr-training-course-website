@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR Training Course - YCCC VR Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .course-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            width: 350px;
+            background: #2c3e50;
+            color: white;
+            overflow-y: auto;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: #34495e;
+            border-bottom: 1px solid #4a5f7a;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .progress-overview {
+            padding: 20px;
+            background: #34495e;
+            border-bottom: 1px solid #4a5f7a;
+        }
+
+        .progress-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(#3498db 0deg 90deg, #ecf0f1 90deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .course-modules {
+            padding: 0;
+        }
+
+        .module-section {
+            border-bottom: 1px solid #4a5f7a;
+        }
+
+        .module-header {
+            padding: 15px 20px;
+            background: #34495e;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .module-header:hover {
+            background: #3a546b;
+        }
+
+        .module-header.active {
+            background: #3498db;
+        }
+
+        .lesson-list {
+            background: #2c3e50;
+        }
+
+        .lesson-item {
+            padding: 12px 20px 12px 40px;
+            cursor: pointer;
+            border-bottom: 1px solid #34495e;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .lesson-item:hover {
+            background: #34495e;
+        }
+
+        .lesson-item.active {
+            background: #3498db;
+            font-weight: bold;
+        }
+
+        .lesson-item.locked {
+            color: #7f8c8d;
+            cursor: not-allowed;
+        }
+
+        .lesson-status {
+            margin-right: 10px;
+            font-size: 1rem;
+        }
+
+        .lesson-duration {
+            margin-left: auto;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Main Content Area */
+        .content-area {
+            flex: 1;
+            margin-left: 350px;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .content-header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .breadcrumb {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .content-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .content-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .content-body {
+            padding: 30px;
+            max-width: 800px;
+        }
+
+        .video-container {
+            margin: 20px 0 30px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 450px;
+        }
+
+        .learning-objectives {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .learning-objectives h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .objectives-list {
+            list-style: none;
+            margin: 0;
+        }
+
+        .objectives-list li {
+            padding: 5px 0;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .objectives-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .content-section {
+            margin: 30px 0;
+        }
+
+        .content-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        .content-section p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding: 20px 0;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .completion-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+            }
+
+            .content-area {
+                margin-left: 0;
+            }
+
+            .content-body {
+                padding: 20px;
+            }
+
+            .video-container iframe {
+                height: 250px;
+            }
+        }
+
+        .video-description {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="course-container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1>🥽 VR Training Course</h1>
+                <p>York County Community College</p>
+            </div>
+
+            <div class="progress-overview">
+                <div class="progress-circle">25%</div>
+                <p style="text-align: center; font-size: 0.9rem;">3 of 12 lessons completed</p>
+            </div>
+
+            <div class="course-modules">
+                <!-- Foundation Track -->
+                <div class="module-section">
+                    <div class="module-header active" onclick="toggleModule('foundation')">
+                        <span>🎯 Understanding the Metaverse</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="lesson-list" id="foundation">
+                        <div class="lesson-item active" onclick="loadLesson('impact-real')">
+                            <span class="lesson-status">▶️</span>
+                            <span>The Impact Will Be Real</span>
+                            <span class="lesson-duration">31 sec</span>
+                        </div>
+                        <div class="lesson-item" onclick="loadLesson('metaverse-today')">
+                            <span class="lesson-status">⏸️</span>
+                            <span>The Metaverse Today</span>
+                            <span class="lesson-duration">1 min</span>
+                        </div>
+                        <div class="lesson-item locked">
+                            <span class="lesson-status">🔒</span>
+                            <span>Breaking Down the Metaverse</span>
+                            <span class="lesson-duration">2 min</span>
+                        </div>
+                        <div class="lesson-item locked">
+                            <span class="lesson-status">🔒</span>
+                            <span>Knowledge Check</span>
+                            <span class="lesson-duration">10 min</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hardware Track -->
+                <div class="module-section">
+                    <div class="module-header" onclick="toggleModule('hardware')">
+                        <span>🛠️ VR Hardware & Setup</span>
+                        <span>▶</span>
+                    </div>
+                    <div class="lesson-list" id="hardware" style="display: none;">
+                        <div class="lesson-item locked">
+                            <span class="lesson-status">🔒</span>
+                            <span>VR Hardware Overview</span>
+                            <span class="lesson-duration">20 min</span>
+                        </div>
+                        <div class="lesson-item locked">
+                            <span class="lesson-status">🔒</span>
+                            <span>Meta Quest 3 Setup</span>
+                            <span class="lesson-duration">25 min</span>
+                        </div>
+                        <div class="lesson-item locked">
+                            <span class="lesson-status">🔒</span>
+                            <span>Safety & Best Practices</span>
+                            <span class="lesson-duration">18 min</span>
+                        </div>
+                        <div class="lesson-item locked">
+                            <span class="lesson-status">🔒</span>
+                            <span>Troubleshooting</span>
+                            <span class="lesson-duration">15 min</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Applications Track -->
+                <div class="module-section">
+                    <div class="module-header" onclick="toggleModule('applications')">
+                        <span>🎓 Real-World Applications</span>
+                        <span>▶</span>
+                    </div>
+                    <div class="lesson-list" id="applications" style="display: none;">
+                        <div class="lesson-item locked">
+                            <span class="lesson-status">🔒</span>
+                            <span>VR in Education</span>
+                            <span class="lesson-duration">30 min</span>
+                        </div>
+                        <div class="lesson-item locked">
+                            <span class="lesson-status">🔒</span>
+                            <span>Healthcare Applications</span>
+                            <span class="lesson-duration">25 min</span>
+                        </div>
+                        <div class="lesson-item locked">
+                            <span class="lesson-status">🔒</span>
+                            <span>Final Lab Session</span>
+                            <span class="lesson-duration">60 min</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="content-area">
+            <div class="content-header">
+                <div class="breadcrumb">Understanding the Metaverse > The Impact Will Be Real</div>
+                <h1 class="content-title" id="lesson-title">The Impact Will Be Real</h1>
+                <div class="content-meta">
+                    <span>📹 Marketing Video</span>
+                    <span>⏱️ 31 seconds</span>
+                    <span>🎯 Step 1 of 12</span>
+                </div>
+            </div>
+
+            <div class="content-body" id="lesson-content">
+                <div class="video-description">
+                    This Meta marketing video showcases the transformative potential of VR and the metaverse across different industries - from education and training to healthcare. It provides an engaging overview of how VR technology can create real-world impact.
+                </div>
+
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/80IIEnSNwQc" frameborder="0" allowfullscreen></iframe>
+                </div>
+
+                <div class="learning-objectives">
+                    <h3>📋 What You'll Learn</h3>
+                    <ul class="objectives-list">
+                        <li>Understand the potential impact of VR technology</li>
+                        <li>See real-world applications across industries</li>
+                        <li>Visualize the future possibilities of the metaverse</li>
+                        <li>Get excited about VR's transformative potential</li>
+                    </ul>
+                </div>
+
+                <div class="content-section">
+                    <h2>Why This Video Matters</h2>
+                    <p>This short but powerful video from Meta demonstrates exactly "What is the Metaverse?" by showing practical applications rather than abstract concepts. You'll see how VR is already making a real impact in:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Medical training and surgical practice</li>
+                        <li>Educational experiences and virtual field trips</li>
+                        <li>Professional training simulations</li>
+                        <li>Remote collaboration and communication</li>
+                    </ul>
+                </div>
+
+                <div class="content-section">
+                    <h2>Key Takeaways</h2>
+                    <p>The metaverse isn't just a futuristic concept - it's happening now. This video shows how VR technology is creating measurable, real-world benefits across different sectors, making it an ideal introduction to understanding what the metaverse actually is and why it matters.</p>
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" disabled>← Previous</button>
+                    <div class="completion-status">
+                        <span>Step 1 of 12</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="nextLesson()">Next Lesson →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lesson content data
+        const lessons = {
+            'impact-real': {
+                title: 'The Impact Will Be Real',
+                breadcrumb: 'Understanding the Metaverse > The Impact Will Be Real',
+                meta: ['📹 Marketing Video', '⏱️ 31 seconds', '🎯 Step 1 of 12'],
+                videoId: '80IIEnSNwQc',
+                content: `
+                    <div class="video-description">
+                        This Meta marketing video showcases the transformative potential of VR and the metaverse across different industries - from education and training to healthcare. It provides an engaging overview of how VR technology can create real-world impact.
+                    </div>
+
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/80IIEnSNwQc" frameborder="0" allowfullscreen></iframe>
+                    </div>
+
+                    <div class="learning-objectives">
+                        <h3>📋 What You'll Learn</h3>
+                        <ul class="objectives-list">
+                            <li>Understand the potential impact of VR technology</li>
+                            <li>See real-world applications across industries</li>
+                            <li>Visualize the future possibilities of the metaverse</li>
+                            <li>Get excited about VR's transformative potential</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h2>Why This Video Matters</h2>
+                        <p>This short but powerful video from Meta demonstrates exactly "What is the Metaverse?" by showing practical applications rather than abstract concepts. You'll see how VR is already making a real impact in:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Medical training and surgical practice</li>
+                            <li>Educational experiences and virtual field trips</li>
+                            <li>Professional training simulations</li>
+                            <li>Remote collaboration and communication</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h2>Key Takeaways</h2>
+                        <p>The metaverse isn't just a futuristic concept - it's happening now. This video shows how VR technology is creating measurable, real-world benefits across different sectors, making it an ideal introduction to understanding what the metaverse actually is and why it matters.</p>
+                    </div>
+                `
+            },
+            'metaverse-today': {
+                title: 'The Metaverse Today',
+                breadcrumb: 'Understanding the Metaverse > The Metaverse Today',
+                meta: ['📹 Marketing Video', '⏱️ 1 minute', '🎯 Step 2 of 12'],
+                videoId: 'KLOcj5qvOio',
+                content: `
+                    <div class="video-description">
+                        This Meta video shows what the metaverse looks like today - real people using VR for work, education, and collaboration. It answers "What is the Metaverse?" by showing current, practical applications rather than future concepts.
+                    </div>
+
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/KLOcj5qvOio" frameborder="0" allowfullscreen></iframe>
+                    </div>
+
+                    <div class="learning-objectives">
+                        <h3>📋 What You'll Learn</h3>
+                        <ul class="objectives-list">
+                            <li>See current metaverse applications in action</li>
+                            <li>Understand how people use VR for real work</li>
+                            <li>Learn about virtual collaboration tools</li>
+                            <li>Discover practical VR use cases today</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h2>Current Metaverse Reality</h2>
+                        <p>This video demonstrates that the metaverse isn't a distant future - it's happening right now. You'll see real examples of:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Surgeons practicing complex procedures in VR</li>
+                            <li>Students taking virtual field trips</li>
+                            <li>Workers collaborating in virtual spaces</li>
+                            <li>People connecting across distances through VR</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h2>Why This Matters for Your Learning</h2>
+                        <p>Understanding current applications helps you see the immediate value of VR skills. The technology you'll learn to use in our VR Lab is already being used professionally across many industries.</p>
+                    </div>
+                `
+            }
+        };
+
+        function toggleModule(moduleId) {
+            const moduleList = document.getElementById(moduleId);
+            const header = event.target;
+            const arrow = header.querySelector('span:last-child');
+            
+            if (moduleList.style.display === 'none') {
+                moduleList.style.display = 'block';
+                arrow.textContent = '▼';
+                header.classList.add('active');
+            } else {
+                moduleList.style.display = 'none';
+                arrow.textContent = '▶';
+                header.classList.remove('active');
+            }
+        }
+
+        function loadLesson(lessonId) {
+            if (!lessons[lessonId]) return;
+            
+            // Remove active class from all lessons
+            document.querySelectorAll('.lesson-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked lesson
+            event.target.classList.add('active');
+            
+            const lesson = lessons[lessonId];
+            
+            // Update header
+            document.querySelector('.breadcrumb').textContent = lesson.breadcrumb;
+            document.getElementById('lesson-title').textContent = lesson.title;
+            
+            // Update meta information
+            const metaContainer = document.querySelector('.content-meta');
+            metaContainer.innerHTML = lesson.meta.map(item => `<span>${item}</span>`).join('');
+            
+            // Update content
+            document.getElementById('lesson-content').innerHTML = lesson.content + `
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" onclick="previousLesson()">← Previous</button>
+                    <div class="completion-status">
+                        <span>Lesson in progress</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="nextLesson()">Next Lesson →</button>
+                </div>
+            `;
+        }
+
+        function nextLesson() {
+            const currentActive = document.querySelector('.lesson-item.active');
+            const nextLesson = currentActive.nextElementSibling;
+            
+            if (nextLesson && !nextLesson.classList.contains('locked')) {
+                // Mark current as completed
+                currentActive.querySelector('.lesson-status').textContent = '✅';
+                
+                // Load next lesson
+                const lessonId = nextLesson.onclick.toString().match(/'([^']+)'/)[1];
+                if (lessons[lessonId]) {
+                    loadLesson(lessonId);
+                }
+            } else {
+                alert('Complete this lesson to unlock the next one!');
+            }
+        }
+
+        function previousLesson() {
+            const currentActive = document.querySelector('.lesson-item.active');
+            const prevLesson = currentActive.previousElementSibling;
+            
+            if (prevLesson) {
+                const lessonId = prevLesson.onclick.toString().match(/'([^']+)'/)[1];
+                if (lessons[lessonId]) {
+                    loadLesson(lessonId);
+                }
+            }
+        }
+
+        // Initialize the course
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('VR Training Course loaded');
+            
+            // Load progress from localStorage if available
+            const progress = localStorage.getItem('vrCourseProgress');
+            if (progress) {
+                const progressData = JSON.parse(progress);
+                console.log('Loaded progress:', progressData);
+            }
+        });
+    </script>
+</body>
+</html>
