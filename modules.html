@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Modules - VR Training Course</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .module-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .module {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .module:hover {
+            transform: translateY(-5px);
+        }
+        
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .module-title {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .module-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .status-available { background: #d4edda; color: #155724; }
+        .status-in-progress { background: #fff3cd; color: #856404; }
+        .status-completed { background: #cce5ff; color: #004085; }
+        .status-locked { background: #f8d7da; color: #721c24; }
+        
+        .module-content {
+            display: none;
+        }
+        
+        .module-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .lesson-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+        
+        .lesson-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .lesson-item:hover {
+            background: #e9ecef;
+        }
+        
+        .lesson-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            width: 30px;
+        }
+        
+        .lesson-info {
+            flex: 1;
+        }
+        
+        .lesson-duration {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="module-container">
+        <header style="text-align: center; margin-bottom: 40px;">
+            <h1 style="color: #667eea; margin-bottom: 10px;">📚 Course Modules</h1>
+            <p style="color: #666;">Interactive VR Training Course Curriculum</p>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 25%"></div>
+            </div>
+            <p style="color: #666; font-size: 0.9rem;">Overall Progress: 25% Complete</p>
+        </header>
+
+        <!-- Module 1: VR Fundamentals -->
+        <div class="module">
+            <div class="module-header" onclick="toggleModule('module1')">
+                <h2 class="module-title">Module 1: VR Fundamentals</h2>
+                <span class="module-status status-completed">✓ Completed</span>
+            </div>
+            <div class="module-content" id="module1">
+                <p>Learn the basic concepts and principles of Virtual Reality technology.</p>
+                <ul class="lesson-list">
+                    <li class="lesson-item" onclick="startLesson('intro-vr')">
+                        <span class="lesson-icon">🎯</span>
+                        <div class="lesson-info">
+                            <strong>Introduction to VR</strong>
+                            <div class="lesson-duration">Duration: 15 minutes</div>
+                        </div>
+                        <span style="color: green;">✓</span>
+                    </li>
+                    <li class="lesson-item" onclick="startLesson('vr-history')">
+                        <span class="lesson-icon">📚</span>
+                        <div class="lesson-info">
+                            <strong>History of Virtual Reality</strong>
+                            <div class="lesson-duration">Duration: 20 minutes</div>
+                        </div>
+                        <span style="color: green;">✓</span>
+                    </li>
+                    <li class="lesson-item" onclick="startLesson('vr-types')">
+                        <span class="lesson-icon">🔍</span>
+                        <div class="lesson-info">
+                            <strong>Types of VR Systems</strong>
+                            <div class="lesson-duration">Duration: 25 minutes</div>
+                        </div>
+                        <span style="color: green;">✓</span>
+                    </li>
+                </ul>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="window.location.href='index.html'">← Back to Home</button>
+                    <button class="btn" onclick="startQuiz('module1')">Take Module Quiz</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module 2: VR Hardware -->
+        <div class="module">
+            <div class="module-header" onclick="toggleModule('module2')">
+                <h2 class="module-title">Module 2: VR Hardware & Setup</h2>
+                <span class="module-status status-in-progress">📖 In Progress</span>
+            </div>
+            <div class="module-content" id="module2">
+                <p>Understanding VR hardware components and proper setup procedures.</p>
+                <ul class="lesson-list">
+                    <li class="lesson-item" onclick="startLesson('headset-components')">
+                        <span class="lesson-icon">🥽</span>
+                        <div class="lesson-info">
+                            <strong>VR Headset Components</strong>
+                            <div class="lesson-duration">Duration: 18 minutes</div>
+                        </div>
+                        <span style="color: green;">✓</span>
+                    </li>
+                    <li class="lesson-item" onclick="startLesson('room-setup')">
+                        <span class="lesson-icon">🏠</span>
+                        <div class="lesson-info">
+                            <strong>Room Setup and Safety</strong>
+                            <div class="lesson-duration">Duration: 22 minutes</div>
+                        </div>
+                        <span style="color: orange;">▶</span>
+                    </li>
+                    <li class="lesson-item" onclick="startLesson('quest3-operation')">
+                        <span class="lesson-icon">🎮</span>
+                        <div class="lesson-info">
+                            <strong>Meta Quest 3 Operation</strong>
+                            <div class="lesson-duration">Duration: 30 minutes</div>
+                        </div>
+                        <span style="color: #ccc;">○</span>
+                    </li>
+                </ul>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary">← Previous Module</button>
+                    <button class="btn" onclick="continueLesson()">Continue Learning</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module 3: VR Applications -->
+        <div class="module">
+            <div class="module-header" onclick="toggleModule('module3')">
+                <h2 class="module-title">Module 3: VR Applications</h2>
+                <span class="module-status status-available">📋 Available</span>
+            </div>
+            <div class="module-content" id="module3">
+                <p>Explore real-world applications of VR technology across different industries.</p>
+                <ul class="lesson-list">
+                    <li class="lesson-item">
+                        <span class="lesson-icon">🎓</span>
+                        <div class="lesson-info">
+                            <strong>Educational VR</strong>
+                            <div class="lesson-duration">Duration: 25 minutes</div>
+                        </div>
+                        <span style="color: #ccc;">○</span>
+                    </li>
+                    <li class="lesson-item">
+                        <span class="lesson-icon">🏭</span>
+                        <div class="lesson-info">
+                            <strong>Training Simulations</strong>
+                            <div class="lesson-duration">Duration: 35 minutes</div>
+                        </div>
+                        <span style="color: #ccc;">○</span>
+                    </li>
+                    <li class="lesson-item">
+                        <span class="lesson-icon">🏥</span>
+                        <div class="lesson-info">
+                            <strong>Healthcare Applications</strong>
+                            <div class="lesson-duration">Duration: 28 minutes</div>
+                        </div>
+                        <span style="color: #ccc;">○</span>
+                    </li>
+                </ul>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary">← Previous Module</button>
+                    <button class="btn" disabled>Complete Module 2 First</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module 4: Hands-on Practice -->
+        <div class="module">
+            <div class="module-header" onclick="toggleModule('module4')">
+                <h2 class="module-title">Module 4: Hands-on Practice</h2>
+                <span class="module-status status-locked">🔒 Locked</span>
+            </div>
+            <div class="module-content" id="module4">
+                <p>Practical VR Lab sessions and project development.</p>
+                <ul class="lesson-list">
+                    <li class="lesson-item">
+                        <span class="lesson-icon">🧪</span>
+                        <div class="lesson-info">
+                            <strong>VR Lab Session 1</strong>
+                            <div class="lesson-duration">Duration: 60 minutes (In-person)</div>
+                        </div>
+                        <span style="color: #ccc;">🔒</span>
+                    </li>
+                    <li class="lesson-item">
+                        <span class="lesson-icon">🛠️</span>
+                        <div class="lesson-info">
+                            <strong>Practical Exercises</strong>
+                            <div class="lesson-duration">Duration: 45 minutes</div>
+                        </div>
+                        <span style="color: #ccc;">🔒</span>
+                    </li>
+                    <li class="lesson-item">
+                        <span class="lesson-icon">🚀</span>
+                        <div class="lesson-info">
+                            <strong>Final Project</strong>
+                            <div class="lesson-duration">Duration: 90 minutes</div>
+                        </div>
+                        <span style="color: #ccc;">🔒</span>
+                    </li>
+                </ul>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary">← Previous Module</button>
+                    <button class="btn" disabled>Complete Previous Modules</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleModule(moduleId) {
+            const content = document.getElementById(moduleId);
+            const isActive = content.classList.contains('active');
+            
+            // Close all modules
+            document.querySelectorAll('.module-content').forEach(module => {
+                module.classList.remove('active');
+            });
+            
+            // Open clicked module if it wasn't active
+            if (!isActive) {
+                content.classList.add('active');
+            }
+        }
+
+        function startLesson(lessonId) {
+            alert(`Starting lesson: ${lessonId}\n\nThis would navigate to the lesson content page.`);
+        }
+
+        function startQuiz(moduleId) {
+            window.location.href = `quiz.html?module=${moduleId}`;
+        }
+
+        function continueLesson() {
+            alert('Continuing with Room Setup and Safety lesson...');
+        }
+
+        // Auto-open first module
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('module1').classList.add('active');
+        });
+    </script>
+</body>
+</html>
